@@ -1,0 +1,9 @@
+<div *ngIf="heroes.length">
+  <h2>Heroes</h2>
+  <button (click)="onRefresh(heroes)">Refresh</button>
+  <ul>
+    <li *ngFor="let hero of heroes" [class.selected]="hero === selectedHero" (click)="onSelect(hero)">
+      <a routerLink="/heroes/{{hero.id}}" >{{hero.id}}</a> - {{hero.name}}
+    </li>
+  </ul>
+</div>
