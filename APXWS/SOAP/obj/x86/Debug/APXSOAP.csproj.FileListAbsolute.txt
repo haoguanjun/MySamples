@@ -1,7 +1,0 @@
-C:\Code\MySamples\APXWS\SOAP\bin\Debug\ApxSoap.exe.config
-C:\Code\MySamples\APXWS\SOAP\bin\Debug\app.config
-C:\Code\MySamples\APXWS\SOAP\bin\Debug\ApxSoap.exe
-C:\Code\MySamples\APXWS\SOAP\bin\Debug\ApxSoap.pdb
-C:\Code\MySamples\APXWS\SOAP\obj\x86\Debug\APXSOAP.csprojResolveAssemblyReference.cache
-C:\Code\MySamples\APXWS\SOAP\obj\x86\Debug\ApxSoap.exe
-C:\Code\MySamples\APXWS\SOAP\obj\x86\Debug\ApxSoap.pdb
