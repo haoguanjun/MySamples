@@ -15,7 +15,7 @@ namespace Advent.ApxSoap
                     ConfigurationManager.AppSettings["Password"]))
             //using (ApxSoapApiProxy proxy = new ApxSoapApiProxy())
             {
-                Program.Sample_ContactAddress(proxy.ApxWS);
+                Program.Sample_DeleteUser(proxy.ApxWS);
             }
         }
 
@@ -274,6 +274,48 @@ namespace Advent.ApxSoap
             user.PrivateDataRoleIdIsNull = false;
             
             status = apxWS.User_Put(ref putOps, user, out putRlt);
+        }
+
+        private static void Sample_UpdateUser(ApxWS.ApxWS apxWS)
+        {
+            ApxWS.UserQueryOptions qOptions = new ApxWS.UserQueryOptions();
+            ApxWS.UserQueryResult qResult;
+            ApxWS.Status qStatus= apxWS.User_GetByLoginName(ref qOptions, "test", out qResult);
+
+            if (qStatus.StatusCode == ApxWS.StatusCodes.Success && qResult.UserList != null && qResult.UserList.Length != 0)
+            {
+                ApxWS.User user = qResult.UserList[0];
+
+                ApxWS.UserPutOptions pOptions = new ApxWS.UserPutOptions();
+                user._DBAction = ApxWS.DBAction.Update;
+
+                user._UpdatedFields = new ApxWS.UserUpdatedFields();
+
+                user._UpdatedFields.LastName = true;
+                user.LastNameIsNull = false;
+                user.LastName = "NewLastName";
+
+                ApxWS.UserPutResult pResult;
+                apxWS.User_Put(ref pOptions, user, out pResult);
+            }
+        }
+
+        private static void Sample_DeleteUser(ApxWS.ApxWS apxWS)
+        {
+            ApxWS.UserQueryOptions qOptions = new ApxWS.UserQueryOptions();
+            ApxWS.UserQueryResult qResult;
+            ApxWS.Status qStatus = apxWS.User_GetByLoginName(ref qOptions, "test", out qResult);
+
+            if (qStatus.StatusCode == ApxWS.StatusCodes.Success && qResult.UserList != null && qResult.UserList.Length != 0)
+            {
+                ApxWS.User user = qResult.UserList[0];
+
+                ApxWS.UserPutOptions pOptions = new ApxWS.UserPutOptions();
+                user._DBAction = ApxWS.DBAction.Delete;
+
+                ApxWS.UserPutResult pResult;
+                apxWS.User_Put(ref pOptions, user, out pResult);
+            }
         }
 
         /// <summary>
