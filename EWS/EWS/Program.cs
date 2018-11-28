@@ -8,14 +8,14 @@ namespace EWSExample
     {
         static void Main(string[] args)
         {
-            ExchangeProxy proxy = new ExchangeProxy("https://outlook.office365.com/EWS/Exchange.asmx", "email", "password!");
-            proxy.ImpersonatedUser = "email";
-
-            //ExchangeProxy proxy = new ExchangeProxy("https://outlook.office365.com/EWS/Exchange.asmx", "emalil", "password");
+            //ExchangeProxy proxy = new ExchangeProxy("https://outlook.office365.com/EWS/Exchange.asmx", "email", "password!");
             //proxy.ImpersonatedUser = "email";
 
-            TestCaseBase test = new TestCaseMessage(proxy);
-            test.Execute();
+            ////ExchangeProxy proxy = new ExchangeProxy("https://outlook.office365.com/EWS/Exchange.asmx", "emalil", "password");
+            ////proxy.ImpersonatedUser = "email";
+
+            //TestCaseBase test = new TestCaseMessage(proxy);
+            //test.Execute();
         }
 
         public static void CreateContact(ExchangeService service)
@@ -51,6 +51,33 @@ namespace EWSExample
                 Contact contact = item as Contact;
                 Console.WriteLine(contact.PostalAddressIndex);
             }
+        }
+
+
+        private static void Sample()
+        {
+            ExchangeService service = new ExchangeService();
+            service.Url = new Uri("https://{exchangeserver}/EWS/Exchange.asmx");
+            service.Credentials = new WebCredentials("ProxyUser", "ProxyUserPassword");
+            service.ImpersonatedUserId = new ImpersonatedUserId(ConnectingIdType.SmtpAddress, "TargetUser");
+
+            Contact contact = new Contact(service);
+            contact.GivenName = "John";
+            contact.Surname = "Doe";
+            contact.FileAsMapping = FileAsMapping.SurnameCommaGivenName;
+
+            // Specify the business address.
+            PhysicalAddressEntry address = new PhysicalAddressEntry();
+            address.Street = "600 Townsend";
+            address.City = "SF";
+            address.State = "CA";
+            address.PostalCode = "94103";
+            address.CountryOrRegion = "United States";
+            contact.PhysicalAddresses[PhysicalAddressKey.Business] = address;
+
+            // Make Business Address as Postal Address
+            contact.PostalAddressIndex = PhysicalAddressIndex.Business;
+            contact.Save();
         }
     }
 }
