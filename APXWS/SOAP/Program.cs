@@ -15,10 +15,38 @@ namespace Advent.ApxSoap
                     ConfigurationManager.AppSettings["Password"]))
             //using (ApxSoapApiProxy proxy = new ApxSoapApiProxy())
             {
-                Program.Sample_DeleteUser(proxy.ApxWS);
+                Program.Sample_Contact(proxy.ApxWS);
             }
         }
 
+        private static void Sample_Contact(ApxWS.ApxWS apxWS)
+        {
+            ApxWS.ContactQueryOptions queryOptions = new ApxWS.ContactQueryOptions();
+            ApxWS.ContactQueryResult queryResult;
+
+            // You must already setup a contact with code "C1"
+            ApxWS.Status status = apxWS.Contact_GetByContactCode(ref queryOptions, "D0U0100012", out queryResult);
+
+            ApxWS.Contact contact = queryResult.ContactList[0];
+            contact._DBAction = ApxWS.DBAction.Update;
+            contact._UpdatedFields = new ApxWS.ContactUpdatedFields();
+
+            // To clear a string field, set it to an empty string.
+            contact.LastNameIsNull = false;
+            contact._UpdatedFields.LastName = true;
+            contact.LastName = contact.LastName;
+
+
+            ApxWS.ContactPutOptions putOps = new ApxWS.ContactPutOptions();
+            ApxWS.ContactPutResult putRlt = new ApxWS.ContactPutResult();
+
+            status = apxWS.Contact_Put(ref putOps, contact, out putRlt);
+
+            if (!status.Success)
+            {
+                Console.WriteLine(status.ExceptionText);
+            }
+        }
         /// <summary>
         /// This sample include 3 cases for Salentica
         /// Case 1: Change default address from Home to Business
