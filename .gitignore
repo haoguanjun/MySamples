@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/APXWS/APXRESTfulAPI/bin/Debug
+/APXWS/APXRESTfulAPI/obj/x86/Debug
+/EWS/EWS/obj/Debug
+/EWS/EWS/bin/Debug
+/APXWS/SOAP/obj/x86/Debug
+/APXWS/packages/Newtonsoft.Json.12.0.1
+/APXWS/RESTful/bin/Debug
+/APXWS/RESTful/obj/x86/Debug
+/APXWS/SOAP/bin/Debug
+/APXWS/.vs/APXWS/v15
+/EWS/.vs/EWS/v15/Server/sqlite3
