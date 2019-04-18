@@ -37,6 +37,12 @@ namespace Advent.ApxRestApiExample
             this.client = this.CreateHttpClientInstance(webServer, token.access_token);
         }
 
+        public HttpClientProxy(string webServer)
+        {
+            ApxToken token = this.GetToken(webServer);
+            this.client = this.CreateHttpClientInstance(webServer, token.access_token);
+        }
+
         private ApxToken GetToken(string webServer, string username, string password)
         {
             // this is to bypass certificate validation error. 
@@ -52,8 +58,33 @@ namespace Advent.ApxRestApiExample
                 { "username", username },
                 { "password", password }
             });
-            
-            HttpResponseMessage response = new HttpClient().PostAsync(requestUri, content).Result.EnsureSuccessStatusCode();
+
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = client.PostAsync(requestUri, content).Result.EnsureSuccessStatusCode();
+            string json = response.Content.ReadAsStringAsync().Result;
+            ApxToken token = JsonConvert.DeserializeObject<ApxToken>(json);
+            return token;
+        }
+
+        private ApxToken GetToken(string webServer)
+        {
+            // this is to bypass certificate validation error. 
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+            string requestUri = string.Format("https://{0}:5001/connect/token", webServer);
+            HttpContent content = new FormUrlEncodedContent(new Dictionary<string, string>()
+            {
+                { "client_id", "win.APXPublicAPIClient" },
+                { "client_secret", "advs" },
+                { "grant_type", "WindowsAuth" },
+                { "scope", "APXPublicAPI" }
+            });
+
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.UseDefaultCredentials = true;
+
+            HttpClient client = new HttpClient(clientHandler);
+            HttpResponseMessage response = client.PostAsync(requestUri, content).Result.EnsureSuccessStatusCode();
             string json = response.Content.ReadAsStringAsync().Result;
             ApxToken token = JsonConvert.DeserializeObject<ApxToken>(json);
             return token;
