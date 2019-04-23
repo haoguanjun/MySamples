@@ -13,8 +13,8 @@ namespace Advent.ApxRestApiExample
     {
         static void Main(string[] args)
         {
-            //using (HttpClientProxy proxy = new HttpClientProxy("vmapxba9.advent.com", "api", "advs"))
-            using (HttpClientProxy proxy = new HttpClientProxy("vmapxba9.advent.com"))
+            //using (HttpClientProxy proxy = new HttpClientProxy("vmapxba8.advent.com", "api", "advs"))
+            using (HttpClientProxy proxy = new HttpClientProxy("vmapxba8.advent.com"))
             {
                 string result = proxy.HttpGet("apxlogin/api/odata/v1/portfolios");
             }

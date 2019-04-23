@@ -60,9 +60,14 @@ namespace Advent.ApxRestApiExample
             });
 
             HttpClient client = new HttpClient();
-            HttpResponseMessage response = client.PostAsync(requestUri, content).Result.EnsureSuccessStatusCode();
-            string json = response.Content.ReadAsStringAsync().Result;
-            ApxToken token = JsonConvert.DeserializeObject<ApxToken>(json);
+            HttpResponseMessage response = client.PostAsync(requestUri, content).Result;
+            string result = response.Content.ReadAsStringAsync().Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
+            }
+
+            ApxToken token = JsonConvert.DeserializeObject<ApxToken>(result);
             return token;
         }
 
@@ -80,13 +85,18 @@ namespace Advent.ApxRestApiExample
                 { "scope", "APXPublicAPI" }
             });
 
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.UseDefaultCredentials = true;
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.UseDefaultCredentials = true;
 
-            HttpClient client = new HttpClient(clientHandler);
-            HttpResponseMessage response = client.PostAsync(requestUri, content).Result.EnsureSuccessStatusCode();
-            string json = response.Content.ReadAsStringAsync().Result;
-            ApxToken token = JsonConvert.DeserializeObject<ApxToken>(json);
+            HttpClient client = new HttpClient(handler);
+            HttpResponseMessage response = client.PostAsync(requestUri, content).Result;
+            string result = response.Content.ReadAsStringAsync().Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(string.Format("Code={0}; Error={1}",response.StatusCode, result));
+            }
+
+            ApxToken token = JsonConvert.DeserializeObject<ApxToken>(result);
             return token;
         }
 
