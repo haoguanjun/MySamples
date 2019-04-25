@@ -114,8 +114,13 @@ namespace Advent.ApxRestApiExample
         {
             string requestUrl = string.Format("{0}/{1}", this.client.BaseAddress.AbsoluteUri, relativeUri);
             HttpResponseMessage response = this.client.GetAsync(requestUrl).Result;
-            response.EnsureSuccessStatusCode();
-            return response.Content.ReadAsStringAsync().Result;
+            string result = response.Content.ReadAsStringAsync().Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
+            }
+
+            return result;
         }
 
         public string HttpPatch(string relativeUri, string jsonString)
@@ -124,8 +129,13 @@ namespace Advent.ApxRestApiExample
             HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("Patch"), requestUrl);
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             HttpResponseMessage response = this.client.SendAsync(request).Result;
-            response.EnsureSuccessStatusCode();
-            return response.Content.ReadAsStringAsync().Result;
+            string result = response.Content.ReadAsStringAsync().Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
+            }
+
+            return result;
         }
 
         public void Dispose()
