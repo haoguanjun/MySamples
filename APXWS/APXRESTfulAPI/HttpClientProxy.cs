@@ -79,7 +79,7 @@ namespace Advent.ApxRestApiExample
             string requestUri = string.Format("https://{0}:5001/connect/token", webServer);
             HttpContent content = new FormUrlEncodedContent(new Dictionary<string, string>()
             {
-                { "client_id", "win.APXPublicAPIClient" },
+                { "client_id", "ro.APXPublicAPIClient" },
                 { "client_secret", "advs" },
                 { "grant_type", "WindowsAuth" },
                 { "scope", "APXPublicAPI" }
