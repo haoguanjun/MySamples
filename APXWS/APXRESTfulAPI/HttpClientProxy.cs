@@ -1,49 +1,35 @@
 ﻿
-namespace Advent.ApxRestApiExample
+namespace Advent.APXRESTfulAPI
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Net.Http;
     using System.Text;
-    using Newtonsoft.Json;
-
-    public class ApxToken
-    {
-        public string access_token
-        {
-            get;
-            set;
-        }
-        public int expires_in
-        {
-            get;
-            set;
-        }
-        public string token_type
-        {
-            get;
-            set;
-        }
-    }
+    using Microsoft.IdentityModel.JsonWebTokens;
 
     public class HttpClientProxy : IDisposable
     {
         private HttpClient client;
+        private Token token;
+        private string webserver;
 
         public HttpClientProxy(string webServer, string username, string password)
         {
-            ApxToken token = this.GetToken(webServer, username, password);
-            this.client = this.CreateHttpClientInstance(webServer, token.access_token);
+            this.webserver = webServer;
+            this.token = this.GetToken(webServer, username, password);
+            this.client = this.CreateHttpClientInstance(webServer, this.token.access_token);
         }
 
         public HttpClientProxy(string webServer)
         {
-            ApxToken token = this.GetToken(webServer);
-            this.client = this.CreateHttpClientInstance(webServer, token.access_token);
+            this.webserver = webServer;
+            this.token = this.GetToken(this.webserver);
+            this.client = this.CreateHttpClientInstance(webServer, this.token.access_token);
         }
 
-        private ApxToken GetToken(string webServer, string username, string password)
+        private Token GetToken(string webServer, string username, string password)
         {
             // this is to bypass certificate validation error. 
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
@@ -51,10 +37,10 @@ namespace Advent.ApxRestApiExample
             string requestUri = string.Format("https://{0}:5001/connect/token", webServer);
             HttpContent content = new FormUrlEncodedContent(new Dictionary<string, string>()
             {
-                { "client_id", "ro.APXPublicAPIClient" },
+                { "client_id", "ro.APXAPIClient" },
                 { "client_secret", "advs" },
                 { "grant_type", "password" },
-                { "scope", "APXPublicAPI" },
+                { "scope", "apxapi" },
                 { "username", username },
                 { "password", password }
             });
@@ -67,11 +53,11 @@ namespace Advent.ApxRestApiExample
                 throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
             }
 
-            ApxToken token = JsonConvert.DeserializeObject<ApxToken>(result);
+            Token token = JsonConvert.DeserializeObject<Token>(result);
             return token;
         }
 
-        private ApxToken GetToken(string webServer)
+        private Token GetToken(string webServer)
         {
             // this is to bypass certificate validation error. 
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
@@ -79,10 +65,10 @@ namespace Advent.ApxRestApiExample
             string requestUri = string.Format("https://{0}:5001/connect/token", webServer);
             HttpContent content = new FormUrlEncodedContent(new Dictionary<string, string>()
             {
-                { "client_id", "ro.APXPublicAPIClient" },
+                { "client_id", "ro.APXAPIClient" },
                 { "client_secret", "advs" },
                 { "grant_type", "WindowsAuth" },
-                { "scope", "APXPublicAPI" }
+                { "scope", "apxapi" }
             });
 
             HttpClientHandler handler = new HttpClientHandler();
@@ -96,7 +82,7 @@ namespace Advent.ApxRestApiExample
                 throw new Exception(string.Format("Code={0}; Error={1}",response.StatusCode, result));
             }
 
-            ApxToken token = JsonConvert.DeserializeObject<ApxToken>(result);
+            Token token = JsonConvert.DeserializeObject<Token>(result);
             return token;
         }
 
@@ -117,7 +103,7 @@ namespace Advent.ApxRestApiExample
             string result = response.Content.ReadAsStringAsync().Result;
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
+                //throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
             }
 
             return result;
@@ -138,8 +124,23 @@ namespace Advent.ApxRestApiExample
             return result;
         }
 
+        private void Logout(string sessionGuid)
+        {
+            string requestUrl = string.Format("http://{0}/apxlogin/Api/authenticate?logout", this.webserver);
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("sessioncode", sessionGuid);
+            
+            HttpResponseMessage response = client.GetAsync(requestUrl).Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Logout Fails.");
+            }
+        }
+
         public void Dispose()
         {
+            JsonWebToken jwt = new JsonWebToken(this.token.access_token);
+            this.Logout(jwt.Subject);
         }
     }
 }
