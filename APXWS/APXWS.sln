@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APXSOAP", "SOAP\APXSOAP.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APXRESTful", "RESTful\APXRESTful.csproj", "{159212B3-A8E8-4198-9158-87ADE9E3DAA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APXRESTfulAPI", "APXRESTfulAPI\APXRESTfulAPI.csproj", "{9838F93F-D55A-4B1A-9480-09A1229C44E3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -23,10 +21,6 @@ Global
 		{159212B3-A8E8-4198-9158-87ADE9E3DAA3}.Debug|x86.Build.0 = Debug|x86
 		{159212B3-A8E8-4198-9158-87ADE9E3DAA3}.Release|x86.ActiveCfg = Release|x86
 		{159212B3-A8E8-4198-9158-87ADE9E3DAA3}.Release|x86.Build.0 = Release|x86
-		{9838F93F-D55A-4B1A-9480-09A1229C44E3}.Debug|x86.ActiveCfg = Debug|x86
-		{9838F93F-D55A-4B1A-9480-09A1229C44E3}.Debug|x86.Build.0 = Debug|x86
-		{9838F93F-D55A-4B1A-9480-09A1229C44E3}.Release|x86.ActiveCfg = Release|x86
-		{9838F93F-D55A-4B1A-9480-09A1229C44E3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
