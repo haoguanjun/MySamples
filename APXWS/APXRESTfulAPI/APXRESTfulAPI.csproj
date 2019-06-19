@@ -72,9 +72,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TokenAuth.cs" />
+    <Compile Include="AuthFilter.cs" />
     <Compile Include="Token.cs" />
-    <Compile Include="HttpClientProxy.cs" />
-    <Compile Include="PortfolioProxy.cs" />
+    <Compile Include="HttpProxy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
