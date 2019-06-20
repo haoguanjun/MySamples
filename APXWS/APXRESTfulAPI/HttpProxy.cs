@@ -10,46 +10,38 @@ namespace Advent.APXRESTfulAPI
         private HttpClient client;
         private string webserver;
 
-        public HttpProxy(string webServer, string token)
+        public HttpProxy(string webServer, string accesstoken)
         {
             this.webserver = webServer;
-            this.client = this.CreateHttpClientInstance(webServer, token);
-        }
-
-        private HttpClient CreateHttpClientInstance(string webserver, string accessToken)
-        {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", string.Format("Bearer {0}", accessToken));
-            client.BaseAddress = new Uri(string.Format("http://{0}/apxlogin/api/odata/v1", webserver));
-            return client;
+            this.client = new HttpClient();
+            this.client.DefaultRequestHeaders.Add("Authorization", string.Format("Bearer {0}", accesstoken));
+            this.client.BaseAddress = new Uri(string.Format("http://{0}/apxlogin/api/odata/v1", webserver));
         }
 
         public string Get(string relativeUri)
         {
             string requestUrl = string.Format("{0}/{1}", this.client.BaseAddress.AbsoluteUri, relativeUri);
-            HttpResponseMessage response = this.client.GetAsync(requestUrl).Result;
-            string result = response.Content.ReadAsStringAsync().Result;
-            if (!response.IsSuccessStatusCode)
+            var response = this.client.GetAsync(requestUrl);
+            if (response.IsFaulted)
             {
-                throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
+                throw response.Exception;
             }
 
-            return result;
+            return response.Result.Content.ReadAsStringAsync().Result;
         }
 
-        public string Patch(string relativeUri, string jsonString)
+        public string Patch(string relativeUri, string payload)
         {
             string requestUrl = string.Format("{0}/{1}", this.client.BaseAddress.AbsoluteUri, relativeUri);
             HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("Patch"), requestUrl);
-            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = this.client.SendAsync(request).Result;
-            string result = response.Content.ReadAsStringAsync().Result;
-            if (!response.IsSuccessStatusCode) 
+            request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+            var response = this.client.SendAsync(request);
+            if (response.IsFaulted)
             {
-                throw new Exception(string.Format("Code={0}; Error={1}", response.StatusCode, result));
+                throw response.Exception;
             }
 
-            return result;
+            return response.Result.Content.ReadAsStringAsync().Result;
         }
 
         public void Dispose()
