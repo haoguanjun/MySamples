@@ -8,8 +8,8 @@
     <ProjectGuid>{159212B3-A8E8-4198-9158-87ADE9E3DAA3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Advent.ApxRestful</RootNamespace>
-    <AssemblyName>ApxRestful</AssemblyName>
+    <RootNamespace>Advent.BlotterApi</RootNamespace>
+    <AssemblyName>BlotterApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
