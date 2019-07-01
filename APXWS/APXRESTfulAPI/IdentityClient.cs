@@ -6,10 +6,11 @@ namespace Advent.APXRESTfulAPI
     using System;
     using System.Net;
     using System.Net.Http;
+    using System.Threading.Tasks;
 
     public class IdentityClient : IDisposable
     {
-        private string AppServer
+        private DiscoveryDocumentResponse DiscoveryDocument
         {
             get;
             set;
@@ -21,15 +22,20 @@ namespace Advent.APXRESTfulAPI
             private set;
         }
 
+
         public IdentityClient(string appserver)
         {
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            this.DiscoveryDocument = this.GetDiscoveryDocument(appserver).Result;
+        }
 
-            this.AppServer = appserver;
+        public async Task<TokenResponse> GetAccessToken()
+        {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+           
             var client = new HttpClient();
-            var response = client.RequestTokenAsync(new TokenRequest
+            var response = await client.RequestTokenAsync(new TokenRequest
             {
-                Address = string.Format("https://{0}:5001/connect/token", appserver),
+                Address = this.DiscoveryDocument.TokenEndpoint,
                 ClientId = "ro.APXAPIClient",
                 ClientSecret = "advs",
                 GrantType = "WindowsAuth",
@@ -38,31 +44,27 @@ namespace Advent.APXRESTfulAPI
                 }
             });
 
-            if (response.IsFaulted)
+            if (response.IsError)
             {
                 throw response.Exception;
             }
 
-            this.AccessToken = response.Result.AccessToken;
+            return response;
         }
 
-        public IdentityClient(string appserver, string username, string password)
+        public TokenResponse RequestToken(string username, string password)
         {
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-            this.AppServer = appserver;
             var client = new HttpClient();
-            var response = client.RequestTokenAsync(new TokenRequest
+            var response = client.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
-                Address = string.Format("https://{0}:5001/connect/token", appserver),
+                Address = this.DiscoveryDocument.TokenEndpoint,
                 ClientId = "ro.APXAPIClient",
                 ClientSecret = "advs",
-                GrantType = "password",
-                Parameters = {
-                    { "scope", "apxapi" },
-                    { "username", username },
-                    { "password", password }
-                }
+                Scope = "apxapi",
+                UserName = username,
+                Password = password
             });
 
             if (response.IsFaulted)
@@ -70,43 +72,82 @@ namespace Advent.APXRESTfulAPI
                 throw response.Exception;
             }
 
-            this.AccessToken = response.Result.AccessToken;
+            return response.Result;
         }
 
-        private void RevokeToken(string appserver, string accesstoken)
+        public async void Authorize(string username, string password)
         {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            RequestUrl requestUrl = new RequestUrl(this.DiscoveryDocument.AuthorizeEndpoint);
+            string authorizeUrl = requestUrl.CreateAuthorizeUrl(
+                clientId: "ro.APXAPIClient",
+                responseType: "code id_token token",
+                scope: "apxapi",
+                redirectUri: "http://localhost:5002/signin-oidc");
             var client = new HttpClient();
-            var response = client.RevokeTokenAsync(new TokenRevocationRequest
+            var response = client.GetAsync(authorizeUrl).Result;
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+        }
+
+        public async void RequestToken(string refreshToken)
+        {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            var client = new HttpClient();
+            var response = await client.RequestRefreshTokenAsync(new RefreshTokenRequest
             {
-                Address = string.Format("https://{0}:5001/connect/revocation", appserver),
+                Address = this.DiscoveryDocument.TokenEndpoint,
+                ClientId = "ro.APXAPIClient",
+                ClientSecret = "advs",
+                RefreshToken = refreshToken
+            });
+        }
+
+        private async void RevokeAccessToken(string accesstoken)
+        {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            var client = new HttpClient();
+            var response = await client.RevokeTokenAsync(new TokenRevocationRequest
+            {
+                Address = this.DiscoveryDocument.RevocationEndpoint,
                 ClientId = "ro.APXAPIClient",
                 ClientSecret = "advs",
                 Token = accesstoken
             });
 
-            if (response.IsFaulted)
+            if (response.IsError)
             {
                 throw response.Exception;
             }
         }
 
-        private void EndSession(string appserver, string accesstoken)
-        {            
-            RequestUrl requestUrl = new RequestUrl(string.Format("https://{0}:5001/connect/endsession", appserver));
-            string endsessionUrl = requestUrl.CreateEndSessionUrl(accesstoken);
+        public void EndSession(string idtoken)
+        {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            RequestUrl requestUrl = new RequestUrl(this.DiscoveryDocument.EndSessionEndpoint);
+            string endsessionUrl = requestUrl.CreateEndSessionUrl(idtoken);
 
             var client = new HttpClient();
-            var response = client.GetAsync(endsessionUrl);
-            if (response.IsFaulted)
+            var response = client.GetAsync(endsessionUrl).Result;
+            response.EnsureSuccessStatusCode();
+        }
+
+        private async Task<DiscoveryDocumentResponse> GetDiscoveryDocument(string appserver)
+        {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            var client = new HttpClient();
+            var response = await client.GetDiscoveryDocumentAsync($"https://{appserver}:5001");
+            if (response.IsError)
             {
                 throw response.Exception;
             }
+
+            return response;
         }
 
         public void Dispose()
         {
-            this.EndSession(this.AppServer, this.AccessToken);
-            this.RevokeToken(this.AppServer, this.AccessToken);
+            this.EndSession(this.AccessToken);
         }
     }
 }

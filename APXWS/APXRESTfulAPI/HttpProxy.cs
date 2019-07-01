@@ -1,6 +1,7 @@
 ﻿
 namespace Advent.APXRESTfulAPI
 {
+    using IdentityModel.Client;
     using System;
     using System.Net.Http;
     using System.Text;
@@ -10,11 +11,12 @@ namespace Advent.APXRESTfulAPI
         private HttpClient client;
         private string webserver;
 
-        public HttpProxy(string webServer, string accesstoken)
+        public HttpProxy(string webServer, TokenResponse token)
         {
             this.webserver = webServer;
             this.client = new HttpClient();
-            this.client.DefaultRequestHeaders.Add("Authorization", string.Format("Bearer {0}", accesstoken));
+            //this.client.SetBearerToken(token.AccessToken);
+            this.client.DefaultRequestHeaders.Add("Authorization", string.Format("{0} {1}", token.TokenType, token.AccessToken));
             this.client.BaseAddress = new Uri(string.Format("http://{0}/apxlogin/api/odata/v1", webserver));
         }
 

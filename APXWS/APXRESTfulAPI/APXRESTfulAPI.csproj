@@ -79,7 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IdentityClient.cs" />
-    <Compile Include="AuthFilter.cs" />
+    <Compile Include="AuthFilterClient.cs" />
     <Compile Include="HttpProxy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
