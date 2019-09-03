@@ -13,8 +13,19 @@ namespace AdvOidcSample
     {
         public string Issuer
         {
-            get;
-            set;
+            get
+            {
+                if (this.discovery == null)
+                {
+                    return null;
+                }
+
+                return this.discovery.Issuer;
+            }
+            set
+            {
+                this.discovery = this.GetDiscoveryDocument(value);
+            }
         }
 
         public string ClientId
@@ -41,12 +52,27 @@ namespace AdvOidcSample
             set;
         }
 
-        private string TokenEndpoint
+        private DiscoveryDocumentResponse discovery;
+
+        private DiscoveryDocumentResponse GetDiscoveryDocument(string Issuer)
         {
-            get
+            if (string.IsNullOrEmpty(Issuer))
             {
-                return string.Format("{0}/{1}", this.Issuer, "connect/token");
+                throw new ArgumentNullException("Issuer can't be null or empty.");
             }
+
+            // bypass self-signed Certificate error
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+            var client = new HttpClient();
+            var response = client.GetDiscoveryDocumentAsync(Issuer);
+            response.Wait();
+            if (response.IsFaulted)
+            {
+                throw response.Exception;
+            }
+
+            return response.Result;
         }
 
         /// <summary>
@@ -63,7 +89,7 @@ namespace AdvOidcSample
             var client = new HttpClient();
             var response = client.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
-                Address = this.TokenEndpoint,
+                Address = this.discovery.TokenEndpoint,
                 ClientId = this.ClientId,
                 ClientSecret = this.ClientSecret,
                 Scope = this.Scope,
@@ -90,7 +116,7 @@ namespace AdvOidcSample
             var client = new HttpClient(handler);
             var response = client.RequestTokenAsync(new TokenRequest
             {
-                Address = this.TokenEndpoint,
+                Address = this.discovery.TokenEndpoint,
                 ClientId = this.ClientId,
                 ClientSecret = this.ClientSecret,
                 Parameters = {
