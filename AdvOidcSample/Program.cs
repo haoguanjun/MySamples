@@ -19,8 +19,7 @@ namespace AdvOidcSample
                 Issuer = "https://vmapxba8.advent.com:5001",
                 ClientId = "authcode.apxui",
                 ClientSecret = "advs",
-                Scope = "openid apxapi offline_access",
-                RedirectUri = "http://localhost:5002/"
+                Scope = "openid apxapi offline_access"
             };
 
             var result = client.Signin();

@@ -7,6 +7,7 @@ namespace AdvOidcSample
     using System.Diagnostics;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Sockets;
 
     public class AdvIedntityClient
     {
@@ -40,12 +41,6 @@ namespace AdvOidcSample
         }
 
         public string Scope
-        {
-            get;
-            set;
-        }
-
-        public string RedirectUri
         {
             get;
             set;
@@ -137,8 +132,10 @@ namespace AdvOidcSample
             // bypass self-signed Certificate error
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
+            string redirectUri = this.GenerateRedirectUri();
+
             var lisener = new HttpListener();
-            lisener.Prefixes.Add(this.RedirectUri);
+            lisener.Prefixes.Add(redirectUri);
             lisener.Start();
 
             var options = new OidcClientOptions
@@ -146,7 +143,7 @@ namespace AdvOidcSample
                 Authority = this.Issuer,
                 ClientId = this.ClientId,
                 Scope = this.Scope,
-                RedirectUri = this.RedirectUri,
+                RedirectUri = redirectUri,
                 Flow = OidcClientOptions.AuthenticationFlow.AuthorizationCode,
                 ResponseMode = OidcClientOptions.AuthorizeResponseMode.Redirect
             };
@@ -155,7 +152,7 @@ namespace AdvOidcSample
             var state = client.PrepareLoginAsync();
             state.Wait();
 
-            Process.Start(state.Result.StartUrl);
+            Process browser = Process.Start(state.Result.StartUrl);
 
             var context = lisener.GetContextAsync();
             context.Wait();
@@ -167,6 +164,17 @@ namespace AdvOidcSample
             result.Wait();
 
             return result.Result;
+        }
+
+        private string GenerateRedirectUri()
+        {
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+
+            string redirectUri = string.Format("http://127.0.0.1:{0}/", port);
+            return redirectUri;
         }
 
         private string GetCallBackData(HttpListenerRequest request)
