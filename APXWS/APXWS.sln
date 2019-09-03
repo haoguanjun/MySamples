@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APXSOAP", "SOAP\APXSOAP.csproj", "{C15C7D62-DFAC-4E54-9F6A-CEED833EA06C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APXRESTful", "RESTful\APXRESTful.csproj", "{159212B3-A8E8-4198-9158-87ADE9E3DAA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlotterApi", "RESTful\BlotterApi.csproj", "{159212B3-A8E8-4198-9158-87ADE9E3DAA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
