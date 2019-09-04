@@ -8,12 +8,18 @@ namespace AdvOidcSample
     {
         static void Main(string[] args)
         {
-            Program.Example_AuthorizationCode();
+            Console.WriteLine("Resource Owner Passord flow");
+            Program.PasswordFlow();
+
+            Console.WriteLine("Windows Authentiation flow");
+            Program.WindowsAuthFlow();
+
+            Console.WriteLine("Authorization Code flow");
+            Program.AuthorizationCodeFlow();
         }
 
-        static void Example_AuthorizationCode()
+        static void AuthorizationCodeFlow()
         {
-            // insert into dbo.ClientRedirectUris(ClientId, RedirectUri) values((select Id from Clients where ClientId = 'authcode.apxui'),'http://localhost:5002/')
             var client = new AdvIedntityClient
             {
                 Issuer = "https://vmapxba8.advent.com:5001",
@@ -26,7 +32,7 @@ namespace AdvOidcSample
             Program.Print(result);
         }
 
-        static void Example_Password()
+        static void PasswordFlow()
         {
             var client = new AdvIedntityClient
             {
@@ -40,7 +46,7 @@ namespace AdvOidcSample
             Program.Print(response);
         }
 
-        static void Example_WindowsAuth()
+        static void WindowsAuthFlow()
         {
             var client = new AdvIedntityClient
             {
