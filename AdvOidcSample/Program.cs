@@ -22,7 +22,7 @@ namespace AdvOidcSample
         {
             var client = new AdvIedntityClient
             {
-                Issuer = "https://vmapxba8.advent.com:5001",
+                Issuer = "https://vmapxba9.advent.com:5001",
                 ClientId = "authcode.apxui",
                 ClientSecret = "advs",
                 Scope = "openid apxapi offline_access"
@@ -30,19 +30,25 @@ namespace AdvOidcSample
 
             var result = client.Signin();
             Program.Print(result);
+
+            var response = client.RefreshToken(result.RefreshToken);
+            Program.Print(response);
         }
 
         static void PasswordFlow()
         {
             var client = new AdvIedntityClient
             {
-                Issuer = "https://vmapxba8.advent.com:5001",
+                Issuer = "https://vmapxba9.advent.com:5001",
                 ClientId = "ro.APXAPIClient",
                 ClientSecret = "advs",
                 Scope = "apxapi offline_access"
             };
 
-            var response = client.Login("api", "advs");
+            var result = client.Login("api", "advs");
+            Program.Print(result);
+
+            var response = client.RefreshToken(result.RefreshToken);
             Program.Print(response);
         }
 
@@ -50,13 +56,16 @@ namespace AdvOidcSample
         {
             var client = new AdvIedntityClient
             {
-                Issuer = "https://vmapxba8.advent.com:5001",
+                Issuer = "https://vmapxba9.advent.com:5001",
                 ClientId = "ro.APXAPIClient",
                 ClientSecret = "advs",
                 Scope = "apxapi offline_access"
             };
 
-            var response = client.Login();
+            var result = client.Login();
+            Program.Print(result);
+
+            var response = client.RefreshToken(result.RefreshToken);
             Program.Print(response);
         }
 

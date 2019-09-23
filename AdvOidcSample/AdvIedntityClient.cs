@@ -123,6 +123,24 @@ namespace AdvOidcSample
             return response.Result;
         }
 
+        public TokenResponse RefreshToken(string refreshToken)
+        {
+            // bypass self-signed Certificate error
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+            var client = new HttpClient();
+            var response = client.RequestRefreshTokenAsync(new  RefreshTokenRequest
+            {
+                Address = this.discovery.TokenEndpoint,
+                ClientId = this.ClientId,
+                ClientSecret = this.ClientSecret,
+                RefreshToken = refreshToken                
+            });
+
+            response.Wait();
+            return response.Result;
+        }
+
         /// <summary>
         /// Signin via Identity Server Login Page
         /// </summary>
