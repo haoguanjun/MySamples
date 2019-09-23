@@ -11,16 +11,16 @@ namespace AdvOidcSample
             Console.WriteLine("Resource Owner Passord flow");
             Program.PasswordFlow();
 
-            Console.WriteLine("Windows Authentiation flow");
-            Program.WindowsAuthFlow();
+            //Console.WriteLine("Windows Authentiation flow");
+            //Program.WindowsAuthFlow();
 
-            Console.WriteLine("Authorization Code flow");
-            Program.AuthorizationCodeFlow();
+            //Console.WriteLine("Authorization Code flow");
+            //Program.AuthorizationCodeFlow();
         }
 
         static void AuthorizationCodeFlow()
         {
-            var client = new AdvIedntityClient
+            var client = new AdvIdentityClient
             {
                 Issuer = "https://vmapxba9.advent.com:5001",
                 ClientId = "authcode.apxui",
@@ -37,7 +37,7 @@ namespace AdvOidcSample
 
         static void PasswordFlow()
         {
-            var client = new AdvIedntityClient
+            var client = new AdvIdentityClient
             {
                 Issuer = "https://vmapxba9.advent.com:5001",
                 ClientId = "ro.APXAPIClient",
@@ -46,15 +46,18 @@ namespace AdvOidcSample
             };
 
             var result = client.Login("api", "advs");
-            Program.Print(result);
+            //Program.Print(result);
 
-            var response = client.RefreshToken(result.RefreshToken);
-            Program.Print(response);
+            APXClient apx = new APXClient("http://vmapxba9.advent.com", result.AccessToken);
+            string metadata = apx.GetMetadata();
+
+            //var response = client.RefreshToken(result.RefreshToken);
+            //Program.Print(response);
         }
 
         static void WindowsAuthFlow()
         {
-            var client = new AdvIedntityClient
+            var client = new AdvIdentityClient
             {
                 Issuer = "https://vmapxba9.advent.com:5001",
                 ClientId = "ro.APXAPIClient",

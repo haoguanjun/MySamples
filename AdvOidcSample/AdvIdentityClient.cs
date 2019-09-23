@@ -9,7 +9,7 @@ namespace AdvOidcSample
     using System.Net.Http;
     using System.Net.Sockets;
 
-    public class AdvIedntityClient
+    public class AdvIdentityClient
     {
         public string Issuer
         {

@@ -115,7 +115,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdvIedntityClient.cs" />
+    <Compile Include="AdvIdentityClient.cs" />
+    <Compile Include="APXClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
