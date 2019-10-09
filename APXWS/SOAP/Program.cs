@@ -15,7 +15,8 @@ namespace Advent.ApxSoap
                     ConfigurationManager.AppSettings["Password"]))
             //using (ApxSoapApiProxy proxy = new ApxSoapApiProxy())
             {
-                Program.Sample_Contact(proxy.ApxWS);
+                Program.Sample_UpdateUser(proxy.ApxWS);
+                Program.Sample_CreateNewUser(proxy.ApxWS);
             }
         }
 
@@ -267,7 +268,7 @@ namespace Advent.ApxSoap
             user._DBAction = ApxWS.DBAction.Insert;
 
             user._UpdatedFields = new ApxWS.UserUpdatedFields();
-
+            #region updated fields
             user._UpdatedFields.LastName = true;
             user.LastNameIsNull = false;
             user.LastName = "LastName";
@@ -300,7 +301,7 @@ namespace Advent.ApxSoap
             user._UpdatedFields.PrivateDataRoleId = true;
             user.PrivateDataRoleId = "Super";
             user.PrivateDataRoleIdIsNull = false;
-            
+            #endregion
             status = apxWS.User_Put(ref putOps, user, out putRlt);
         }
 
@@ -308,7 +309,7 @@ namespace Advent.ApxSoap
         {
             ApxWS.UserQueryOptions qOptions = new ApxWS.UserQueryOptions();
             ApxWS.UserQueryResult qResult;
-            ApxWS.Status qStatus= apxWS.User_GetByLoginName(ref qOptions, "test", out qResult);
+            ApxWS.Status qStatus= apxWS.User_GetByLoginName(ref qOptions, "pm", out qResult);
 
             if (qStatus.StatusCode == ApxWS.StatusCodes.Success && qResult.UserList != null && qResult.UserList.Length != 0)
             {
@@ -322,9 +323,12 @@ namespace Advent.ApxSoap
                 user._UpdatedFields.LastName = true;
                 user.LastNameIsNull = false;
                 user.LastName = "NewLastName";
+                user._UpdatedFields.EmailAddress = true;
+                user.EmailAddressIsNull = false;
+                user.EmailAddress = string.Empty;
 
                 ApxWS.UserPutResult pResult;
-                apxWS.User_Put(ref pOptions, user, out pResult);
+                var status = apxWS.User_Put(ref pOptions, user, out pResult);
             }
         }
 

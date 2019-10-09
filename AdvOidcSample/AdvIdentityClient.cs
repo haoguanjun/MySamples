@@ -55,8 +55,7 @@ namespace AdvOidcSample
                 throw new ArgumentNullException("Issuer can't be null or empty.");
             }
 
-            // bypass self-signed Certificate error
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            this.BypassSelfSignedCertificateValidationError();
 
             var client = new HttpClient();
             var response = client.GetDiscoveryDocumentAsync(Issuer);
@@ -77,8 +76,7 @@ namespace AdvOidcSample
         /// <returns></returns>
         public TokenResponse Login(string username, string password)
         {
-            // bypass self-signed Certificate error
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            this.BypassSelfSignedCertificateValidationError();
 
             var client = new HttpClient();
             var response = client.RequestPasswordTokenAsync(new PasswordTokenRequest
@@ -101,8 +99,7 @@ namespace AdvOidcSample
         /// <returns></returns>
         public TokenResponse Login()
         {
-            // bypass self-signed Certificate error
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            this.BypassSelfSignedCertificateValidationError();
 
             var handler = new HttpClientHandler();
             handler.UseDefaultCredentials = true;
@@ -125,8 +122,7 @@ namespace AdvOidcSample
 
         public TokenResponse RefreshToken(string refreshToken)
         {
-            // bypass self-signed Certificate error
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            this.BypassSelfSignedCertificateValidationError();
 
             var client = new HttpClient();
             var response = client.RequestRefreshTokenAsync(new  RefreshTokenRequest
@@ -147,8 +143,7 @@ namespace AdvOidcSample
         /// <returns></returns>
         public LoginResult Signin()
         {
-            // bypass self-signed Certificate error
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            this.BypassSelfSignedCertificateValidationError();
 
             string redirectUri = this.GenerateRedirectUri();
 
@@ -224,6 +219,12 @@ namespace AdvOidcSample
             {
                 return null;
             }
+        }
+
+        private void BypassSelfSignedCertificateValidationError()
+        {
+            // bypass self-signed Certificate error
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
         }
     }
 }
