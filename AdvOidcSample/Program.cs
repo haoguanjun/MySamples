@@ -8,10 +8,10 @@ namespace AdvOidcSample
     {
         static void Main(string[] args)
         {
-            var result = 
-                Program.PasswordFlow();
+            var result =
+                //Program.PasswordFlow();
                 //Program.WindowsAuthFlow();
-                //Program.AuthorizationCodeFlow();
+                Program.AuthorizationCodeFlow();
             Program.Print(result);
         }
 
