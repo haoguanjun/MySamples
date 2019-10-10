@@ -9,9 +9,9 @@ namespace AdvOidcSample
         static void Main(string[] args)
         {
             var result =
-                //Program.PasswordFlow();
-                //Program.WindowsAuthFlow();
-                Program.AuthorizationCodeFlow();
+            Program.PasswordFlow();
+            //Program.WindowsAuthFlow();
+            //Program.AuthorizationCodeFlow();
             Program.Print(result);
         }
 
@@ -69,7 +69,7 @@ namespace AdvOidcSample
             }
             else if (reponse.IsError)
             {
-                Console.WriteLine(reponse.Error);
+                Console.WriteLine(reponse.ErrorDescription);
             }
             else
             {
