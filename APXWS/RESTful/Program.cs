@@ -13,10 +13,9 @@ namespace Advent.ApxRestApiExample
     {
         static void Main(string[] args)
         {
-            //using (ApxApiProxyV1 proxy = new ApxApiProxyV1("vmapxba9.advent.com", "api", "advs"))
-            using (ApxApiProxyV1 proxy = new ApxApiProxyV1("vmapxba9.advent.com"))
+            using (ApxInternalApiProxy proxy = new ApxInternalApiProxy("https://vmw16apxcloud01.gencos.com", "admin", "advs"))
             {
-                string result = proxy.GetBlotters();
+                var result = proxy.GetUserInfo();
             }
         }
     }

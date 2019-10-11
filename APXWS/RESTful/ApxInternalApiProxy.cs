@@ -23,5 +23,17 @@ namespace Advent.ApxRestApiExample
             string url = string.Format("api/internal/reporting/ssrs/RunReport");
             return this.client.HttpPost(url, request);
         }
+
+        public string PostUser(string request)
+        {
+            string url = string.Format("api/internal/user");
+            return this.client.HttpPost(url, request);
+        }
+
+        public string GetUserInfo()
+        {
+            string url = string.Format("api/internal/UserInfo?$d=y&$m=n&$f=u");
+            return this.client.HttpGet(url);
+        }
     }
 }

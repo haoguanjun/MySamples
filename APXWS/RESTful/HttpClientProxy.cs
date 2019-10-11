@@ -105,7 +105,7 @@ namespace Advent.ApxRestApiExample
 
             HttpClient httpClient = new HttpClient(clientHandler);
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            httpClient.BaseAddress = new Uri(string.Format("http://{0}/apx", webServer));
+            httpClient.BaseAddress = new Uri(string.Format("{0}/apx", webServer));
 
             return httpClient;
         }
