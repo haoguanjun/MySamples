@@ -257,6 +257,8 @@ namespace Advent.ApxSoap
         /// <param name="apxWS"></param>
         private static void Sample_CreateNewUser(ApxWS.ApxWS apxWS)
         {
+            string random = string.Format("Test{0}", new Random().Next());
+
             ApxWS.UserQueryOptions queryOptions = new ApxWS.UserQueryOptions();
             ApxWS.UserQueryResult queryResult;
 
@@ -271,11 +273,11 @@ namespace Advent.ApxSoap
             #region updated fields
             user._UpdatedFields.LastName = true;
             user.LastNameIsNull = false;
-            user.LastName = "LastName";
+            user.LastName = random;
 
             user._UpdatedFields.LoginName = true;
             user.LoginNameIsNull = false;
-            user.LoginName = "LoginName";
+            user.LoginName = random;
 
             user._UpdatedFields.IsActive = true;
             user.IsActive = true;
@@ -288,7 +290,7 @@ namespace Advent.ApxSoap
             user.AccessAllUserGroups = true;
 
             user._UpdatedFields.AccessAllUsersRoleID = true;
-            user.AccessAllUsersRoleID = "Super";
+            user.AccessAllUsersRoleID = "Portfolio Manager";
             user.AccessAllUsersRoleIDIsNull = false;
 
             user._UpdatedFields.CanAccessAllUsersPrivateData = true;
@@ -296,12 +298,17 @@ namespace Advent.ApxSoap
             user.CanAccessAllUsersPrivateDataIsNull = false;
 
             user._UpdatedFields.DefaultRoleID = true;
-            user.DefaultRoleID = "Super";
+            user.DefaultRoleID = "Portfolio Manager";
 
             user._UpdatedFields.PrivateDataRoleId = true;
-            user.PrivateDataRoleId = "Super";
+            user.PrivateDataRoleId = "Portfolio Manager";
             user.PrivateDataRoleIdIsNull = false;
             #endregion
+            status = apxWS.User_Put(ref putOps, user, out putRlt);
+
+            user._UpdatedFields.EmailAddress = true;
+            user.EmailAddressIsNull = false;
+            user.EmailAddress = random + "@advent.com";
             status = apxWS.User_Put(ref putOps, user, out putRlt);
         }
 
@@ -320,15 +327,15 @@ namespace Advent.ApxSoap
 
                 user._UpdatedFields = new ApxWS.UserUpdatedFields();
 
-                user._UpdatedFields.LastName = true;
-                user.LastNameIsNull = false;
-                user.LastName = "NewLastName";
                 user._UpdatedFields.EmailAddress = true;
                 user.EmailAddressIsNull = false;
                 user.EmailAddress = string.Empty;
 
                 ApxWS.UserPutResult pResult;
                 var status = apxWS.User_Put(ref pOptions, user, out pResult);
+
+                user.EmailAddress = "new@advent.com";
+                status = apxWS.User_Put(ref pOptions, user, out pResult);
             }
         }
 
